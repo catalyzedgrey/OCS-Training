@@ -24,7 +24,7 @@ public interface PrayerAPI {
     String ENDPOINT = "http://api.aladhan.com/";
 
     @GET("v1/calendarByCity")
-    Single<Timings> getPrayerTime(@Query("city") String city, @Query("country") String country);
+    Observable<Timings> getPrayerTime(@Query("city") String city, @Query("country") String country);
 
     @GET("v1/calendarByCity")
     Call<List<Timings>> getPrayerTimelist(@Query("city") String city, @Query("country") String country);

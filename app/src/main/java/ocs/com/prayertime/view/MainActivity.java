@@ -14,7 +14,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -22,10 +24,12 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Observer;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import ocs.com.prayertime.R;
 import ocs.com.prayertime.viewmodel.PrayerAPI;
@@ -81,8 +85,6 @@ public class MainActivity extends AppCompatActivity {
 
         InitComponents();
 
-        //SetButtonListener();
-
         SetCalendarListener();
     }
 
@@ -95,8 +97,10 @@ public class MainActivity extends AppCompatActivity {
         curDate = sdf.format(date.getTime());
         ((MyApplication) getApplication()).getMainComponent().inject(MainActivity.this);
 
+        prayerList = new ArrayList<Timings>();
         prayerAPI = viewModel.getPrayerAPI();
     }
+    private CompositeDisposable disposables = new CompositeDisposable();
 
 
     @OnClick(R.id.submit_button)
@@ -107,35 +111,31 @@ public class MainActivity extends AppCompatActivity {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(linearLayout.getWindowToken(), 0);
 
-                viewModel.getTimings(cityET.getText().toString(), countryET.getText().toString()).subscribe(new SingleObserver<Timings>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
 
-                    }
-
-                    @Override
-                    public void onSuccess(Timings timings) {
-
-                        prayerList.add(timings);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(MainActivity.this, "Subscriber error!", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-
-                if (prayerList != null && curDate != null) {
-                    SetETsByDate(Integer.parseInt(curDate));
-                } else {
-                    Toast.makeText(MainActivity.this, "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
-                }
+                viewModel.getTimings(cityET.getText().toString(), countryET.getText().toString()).subscribe(responseHandler);
+                
             }
 
         }
 
     }
+
+    private Consumer<Collection<Timings>> responseHandler = new Consumer<Collection<Timings>>() {
+        @Override
+        public void accept(Collection<Timings> timings) throws Exception {
+            Toast.makeText(MainActivity.this, "Hooray!", Toast.LENGTH_SHORT).show();
+            prayerList = (List)timings;
+
+            if (prayerList != null && curDate != null) {
+                SetETsByDate(Integer.parseInt(curDate));
+            } else {
+                Toast.makeText(MainActivity.this, "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
+            }
+//            for (Timings timing: timings) {
+//                Log.d(this.getClass().getSimpleName(), String.valueOf(timing));
+//            }
+        }
+    };
 
 //    @OnClick(R.id.submit_button)
 //    void submit() {

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -35,7 +36,7 @@ public class ViewModel {
 //        return prayerAPI.getPrayerTime(city, country);
 //    }
 
-    public Single<Timings> getTimings(String city, String country) {
+    public Observable getTimings(String city, String country) {
         return prayerAPI.getPrayerTime(city, country)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
