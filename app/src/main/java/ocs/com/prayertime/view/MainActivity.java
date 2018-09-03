@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
     String curDate;
 
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    //private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
 
     @Override
@@ -100,20 +100,18 @@ public class MainActivity extends AppCompatActivity {
         prayerList = new ArrayList<Timings>();
         prayerAPI = viewModel.getPrayerAPI();
     }
-    private CompositeDisposable disposables = new CompositeDisposable();
-
 
     @OnClick(R.id.submit_button)
     void submit() {
         if (countryET != null && cityET != null && viewModel.IsCountryAvailable(countryET.getText().toString())) {
             if (!countryET.getText().toString().equals("") && !countryET.getText().toString().equals("")) {
 
+                //Hide Keyboard
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(linearLayout.getWindowToken(), 0);
 
-
                 viewModel.getTimings(cityET.getText().toString(), countryET.getText().toString()).subscribe(responseHandler);
-                
+
             }
 
         }
@@ -131,10 +129,8 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(MainActivity.this, "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
             }
-//            for (Timings timing: timings) {
-//                Log.d(this.getClass().getSimpleName(), String.valueOf(timing));
-//            }
         }
+
     };
 
 //    @OnClick(R.id.submit_button)
